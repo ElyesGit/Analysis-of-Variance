@@ -76,6 +76,6 @@ d<- x-y
 dmean<-mean(d)
 sd<-sqrt(sum(((d-dmean)^2)/19))
 t <- sqrt(20)*(dmean/sd)
-
+ 
 
 
