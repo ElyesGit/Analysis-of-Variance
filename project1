@@ -1,0 +1,81 @@
+#######EXERCICE1###############
+R <- c(41,86,90,74,146,57,62,78,55,105,46,94,26,101,72,119,88)
+NR <- c(34,23,36,25,35,23,87,48)
+modalite1 <- c(rep(1,17))
+modalite2 <- c(rep(2,8))
+
+tempsDilution <- c(R,NR)
+modalite <- c(modalite1,modalite2)
+donnees <- data.frame(modalite,tempsDilution)
+
+y1_bar <- mean(tempsDilution[modalite == 1])
+y2_bar <- mean(tempsDilution[modalite == 2])
+
+r.aov <- aov(tempsDilution ~ modalite, data = donnees)
+
+residus <- residuals(r.aov)
+s_p <- sqrt(sum(residus^2)/23)
+nbre <- sqrt((1/17)+(1/8))
+t0 <- (y1_bar - y2_bar)/(s_p*nbre)
+
+sqrtTempsD <- sqrt(tempsDilution)
+donneesTransform <- data.frame(modalite,sqrtTempsD)
+y1_barTransform <- mean(sqrtTempsD[modalite == 1])
+y2_barTransform <- mean(sqrtTempsD[modalite == 2])
+r.aovTransform <- aov(sqrtTempsD ~ modalite, data = donneesTransform)
+residusTransform <- residuals(r.aovTransform)
+s_pTransform <- sqrt(sum(residusTransform^2)/23)
+t0Transform <- (y1_barTransform - y2_barTransform)/(s_pTransform*nbre)
+
+par(mfrow=c(1,2))
+qqnorm(residus, main = "Normal Q-Q Plot")
+qqnorm(residusTransform, main = "Normal Q-Q Plot (SQRT of Data)")
+
+#######EXERCICE2###############
+
+ss <-c(0.9,1.1,1.1,0.9,0.5)
+s <- sqrt(sum((ss^2)/5))
+moyenne <-c(3.3,3.7,4.1,4.4,4.8)
+
+####calcul des contrastes####
+contrastes <- matrix(c(0,0,0,1,-1,1,0,1,-1,-1,1,0,-1,0,0,1,-4,1,1,1), ncol=4)
+t(contrastes)%*%contrastes
+SS.C <- vector("numeric",length=4)
+for(i in 1:4) SS.C[i] <- sum(contrastes[,i]*moyenne[i])^2/(sum(contrastes[,i]^2)/5)
+SS.C
+F0 <- SS.C/s^2
+F0
+pf(F0,1,20,lower.tail=FALSE)
+
+
+
+#######EXERCICE3###############
+
+x <-c(1.436,-0.070,1.821,1.151,-0.939,0.129,0.939,1.960,0.736,0.201,
++ 1.019,-0.580,0.934,2.286,1.226,-0.467,2.891,1.542,-1.543,0.347)
+y <-c(0.802,-0.131,1.504,0.429,-0.814,-0.503,0.993,1.519,0.437,0.295,
++ 0.484,-1.177,0.870,1.774,0.623,-0.611,2.535,1.023,-1.566,0.255)
+
+facteurEx3 <- c(x,y)
+modaliteEx3 <- c(rep(1,20),rep(2,20))
+donneesEx3<-data.frame(modaliteEx3,facteurEx3)
+
+y1_barEx3 <- mean(facteurEx3[modaliteEx3 == 1])
+y2_barEx3<- mean(facteurEx3[modaliteEx3 == 2])
+
+r.aovEx3 <- aov(facteurEx3 ~ modaliteEx3, data = donneesEx3)
+
+residusEx3 <- residuals(r.aovEx3)
+s_pEx3 <- sqrt(sum(residusEx3^2)/38)
+nbreEx3 <- sqrt(2/20)
+t0Ex3 <- (y1_barEx3 - y2_barEx3)/(s_pEx3*nbreEx3)
+
+t.test(x,y,paired=TRUE)
+####VERIFICATION DU PAIRED TEST####
+d<- x-y
+dmean<-mean(d)
+sd<-sqrt(sum(((d-dmean)^2)/19))
+t <- sqrt(20)*(dmean/sd)
+
+
+
